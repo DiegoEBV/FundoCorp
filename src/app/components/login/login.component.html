@@ -76,19 +76,22 @@
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <button 
           type="button" 
-          class="btn btn-outline-success btn-sm px-3" 
+          class="btn btn-sm px-3" 
+          [ngClass]="selectedRole() === 'agronomo' ? 'btn-success text-white' : 'btn-outline-success'"
           (click)="cargarDemoCredenciales('agronomo')">
           <i class="bi bi-flower1 me-1"></i>Agrónomo
         </button>
         <button 
           type="button" 
-          class="btn btn-outline-primary btn-sm px-3" 
+          class="btn btn-sm px-3" 
+          [ngClass]="selectedRole() === 'gerente' ? 'btn-primary text-white' : 'btn-outline-primary'"
           (click)="cargarDemoCredenciales('gerente')">
           <i class="bi bi-briefcase me-1"></i>Gerente
         </button>
         <button 
           type="button" 
-          class="btn btn-outline-info btn-sm px-3" 
+          class="btn btn-sm px-3" 
+          [ngClass]="selectedRole() === 'regulador' ? 'btn-info text-white' : 'btn-outline-info'"
           (click)="cargarDemoCredenciales('regulador')">
           <i class="bi bi-shield-check me-1"></i>ANA / Regulador
         </button>
