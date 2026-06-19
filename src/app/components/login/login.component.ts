@@ -16,6 +16,7 @@ export class LoginComponent {
   showPassword = signal(false);
   errorMessage = signal<string | null>(null);
   loading = signal(false);
+  selectedRole = signal<'agronomo' | 'gerente' | 'regulador' | null>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -26,6 +27,24 @@ export class LoginComponent {
       correo: ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.required, Validators.minLength(4)]]
     });
+
+    // Sincronizar selección de rol si se modifican los campos
+    this.loginForm.valueChanges.subscribe(() => {
+      const { correo, contrasena } = this.loginForm.value;
+      const agronomoMatch = correo === 'agronomo@fundocorp.com' && contrasena === 'agronomo123';
+      const gerenteMatch = correo === 'gerente@fundocorp.com' && contrasena === 'gerente123';
+      const reguladorMatch = correo === 'regulador@ana.gob.pe' && contrasena === 'regulador123';
+      
+      if (agronomoMatch) {
+        this.selectedRole.set('agronomo');
+      } else if (gerenteMatch) {
+        this.selectedRole.set('gerente');
+      } else if (reguladorMatch) {
+        this.selectedRole.set('regulador');
+      } else {
+        this.selectedRole.set(null);
+      }
+    });
   }
 
   // Alternar visibilidad de contraseña
@@ -35,6 +54,7 @@ export class LoginComponent {
 
   // Cargar credenciales preestablecidas para demostración rápida
   cargarDemoCredenciales(rol: 'agronomo' | 'gerente' | 'regulador'): void {
+    this.selectedRole.set(rol);
     if (rol === 'agronomo') {
       this.loginForm.patchValue({
         correo: 'agronomo@fundocorp.com',
