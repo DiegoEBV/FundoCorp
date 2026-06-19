@@ -74,13 +74,7 @@
         </button>
 
         <div class="d-flex align-items-center gap-3 ms-auto">
-          <!-- Indicador de conexión a Spring Boot -->
-          <div class="d-flex align-items-center gap-1.5 small px-2 py-1 rounded bg-light border" [ngClass]="{'border-success': backendConnected(), 'border-danger': !backendConnected()}">
-            <span class="pulse-indicator" [ngClass]="{'bg-success': backendConnected(), 'bg-danger': !backendConnected()}"></span>
-            <span class="text-muted d-none d-sm-inline" style="font-size: 0.75rem;">
-              {{ backendConnected() ? 'Spring Boot: Conectado' : 'Spring Boot: Desconectado' }}
-            </span>
-          </div>
+
 
           <!-- Botón de Alternancia de Modo Claro/Oscuro -->
           <button class="btn btn-outline-secondary border-0 btn-sm" (click)="toggleTheme()" title="Cambiar Tema">
