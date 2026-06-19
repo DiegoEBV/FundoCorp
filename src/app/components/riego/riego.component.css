@@ -1,0 +1,25 @@
+.max-width-md {
+  max-width: 600px;
+}
+
+/* Efecto de bloqueo visual para paneles */
+.overlay-disabled {
+  pointer-events: none;
+}
+
+.disabled-shield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  border-radius: 16px;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .disabled-shield {
+  background-color: rgba(11, 15, 25, 0.5);
+}

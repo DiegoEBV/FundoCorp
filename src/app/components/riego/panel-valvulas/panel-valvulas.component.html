@@ -1,0 +1,59 @@
+<div class="row g-3">
+  <div class="col-12" *ngFor="let v of valvulas()">
+    <div class="card card-premium p-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      
+      <!-- Detalle de la Válvula -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="valve-icon-wrapper rounded-circle d-flex align-items-center justify-content-center"
+             [ngClass]="{
+               'bg-light-success text-success': estadosValvulas()[v.idControlador] === 'abierto',
+               'bg-light-secondary text-muted': estadosValvulas()[v.idControlador] === 'cerrado',
+               'bg-light-warning text-warning': estadosValvulas()[v.idControlador] === 'pendiente'
+             }">
+          <i class="bi bi-outlet fs-4" [ngClass]="{'spinner-animation': estadosValvulas()[v.idControlador] === 'pendiente'}"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">{{ v.nombre }}</h6>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-geo-alt me-1"></i>{{ v.ubicacion }} | <span class="small">Línea LoRaWAN</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Estado Actual -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge badge-status" [ngClass]="getBadgeClass(estadosValvulas()[v.idControlador])">
+          <span *ngIf="estadosValvulas()[v.idControlador] === 'pendiente'" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          {{ getStatusText(estadosValvulas()[v.idControlador]) }}
+        </span>
+      </div>
+
+      <!-- Botones de Control Manual -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- Botón Abrir -->
+        <button 
+          type="button" 
+          class="btn btn-success btn-sm px-3" 
+          [disabled]="estadosValvulas()[v.idControlador] === 'abierto' || estadosValvulas()[v.idControlador] === 'pendiente'"
+          (click)="operarValvula(v.idControlador, true)">
+          <i class="bi bi-play-fill me-1"></i>Abrir
+        </button>
+
+        <!-- Botón Cerrar -->
+        <button 
+          type="button" 
+          class="btn btn-secondary btn-sm px-3" 
+          [disabled]="estadosValvulas()[v.idControlador] === 'cerrado' || estadosValvulas()[v.idControlador] === 'pendiente'"
+          (click)="operarValvula(v.idControlador, false)">
+          <i class="bi bi-stop-fill me-1"></i>Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="valvulas().length === 0" class="text-center py-4 text-muted">
+    <i class="bi bi-exclamation-circle fs-3 mb-2 d-block"></i>
+    No hay electroválvulas configuradas en el sistema.
+  </div>
+</div>

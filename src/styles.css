@@ -1,1 +1,227 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importación de Bootstrap y Bootstrap Icons */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Paleta Modo Claro Premium */
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-sidebar: #0f172a; /* Slate 900 */
+  --bg-sidebar-active: #1e293b; /* Slate 800 */
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #f8fafc;
+  --border-color: #e2e8f0;
+  --primary: #2563eb; /* Azul Corporativo */
+  --primary-hover: #1d4ed8;
+  --success: #10b981; /* Verde Esmeralda */
+  --warning: #f59e0b; /* Ambar */
+  --danger: #ef4444; /* Rojo */
+  --info: #06b6d4; /* Cian */
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --sidebar-shadow: 4px 0 10px rgb(15 23 42 / 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(226, 232, 240, 0.8);
+}
+
+[data-theme="dark"] {
+  /* Paleta Modo Oscuro Premium */
+  --bg-body: #0b0f19; /* Gris Azulado Profundo */
+  --bg-card: #151f32; /* Slate Card */
+  --bg-sidebar: #090d16;
+  --bg-sidebar-active: #151f32;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-light: #f1f5f9;
+  --border-color: #1e293b;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #22d3ee;
+  --card-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --sidebar-shadow: 4px 0 15px rgb(0 0 0 / 0.4);
+  --glass-bg: rgba(21, 31, 50, 0.7);
+  --glass-border: rgba(30, 41, 59, 0.8);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbars Premium */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Tarjetas Premium */
+.card-premium {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+.card-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgb(0 0 0 / 0.1);
+}
+
+/* Vidrio/Glassmorphism */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+/* Acentos de Botón */
+.btn-primary-premium {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.btn-primary-premium:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #ffffff;
+}
+
+/* Badges Dinámicos */
+.badge-status {
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+/* Custom inputs */
+.form-control-premium {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  transition: all 0.2s ease;
+}
+.form-control-premium:focus {
+  background-color: var(--bg-card);
+  border-color: var(--primary);
+  color: var(--text-main);
+  box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Correcciones para el Modo Oscuro Premium */
+.text-main {
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] .h1,
+[data-theme="dark"] .h2,
+[data-theme="dark"] .h3,
+[data-theme="dark"] .h4,
+[data-theme="dark"] .h5,
+[data-theme="dark"] .h6 {
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .bg-body {
+  background-color: var(--bg-body) !important;
+}
+[data-theme="dark"] .bg-light {
+  background-color: var(--bg-card) !important;
+}
+[data-theme="dark"] .navbar {
+  background-color: var(--bg-body) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .text-muted {
+  color: var(--text-muted) !important;
+}
+[data-theme="dark"] .text-secondary {
+  color: var(--text-muted) !important;
+}
+[data-theme="dark"] .text-dark {
+  color: var(--text-main) !important;
+}
+[data-theme="dark"] .border,
+[data-theme="dark"] .border-bottom,
+[data-theme="dark"] .border-top,
+[data-theme="dark"] .border-start,
+[data-theme="dark"] .border-end {
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .table-light {
+  --bs-table-bg: var(--bg-body) !important;
+  --bs-table-color: var(--text-main) !important;
+}
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-control {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] .form-control:focus {
+  border-color: var(--primary) !important;
+}
+[data-theme="dark"] .input-group-text {
+  background-color: var(--bg-body) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .card-premium.bg-light-success {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  border-color: var(--success) !important;
+}
+[data-theme="dark"] .btn-outline-secondary {
+  --bs-btn-color: var(--text-muted) !important;
+  --bs-btn-border-color: var(--border-color) !important;
+  --bs-btn-hover-bg: var(--border-color) !important;
+  --bs-btn-hover-border-color: var(--border-color) !important;
+  --bs-btn-hover-color: var(--text-main) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .btn-outline-secondary:hover {
+  background-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}

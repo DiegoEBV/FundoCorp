@@ -1,0 +1,49 @@
+.bg-gradient-ana {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%);
+}
+
+.bg-gradient-legal {
+  background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%);
+}
+
+.fw-mono {
+  font-family: var(--bs-font-monospace);
+}
+
+.text-cyan {
+  color: #22d3ee !important;
+}
+
+.btn-cyan {
+  background-color: #22d3ee;
+  border-color: #22d3ee;
+  color: #0b0f19;
+}
+
+.btn-cyan:hover {
+  background-color: #06b6d4;
+  border-color: #06b6d4;
+}
+
+.table-responsive {
+  border-radius: 8px;
+}
+
+tbody tr {
+  transition: background-color 0.15s ease-in-out;
+}
+
+[data-theme="dark"] .table-light {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .table {
+  color: #f1f5f9;
+  border-color: #1e293b;
+}
+
+[data-theme="dark"] tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}

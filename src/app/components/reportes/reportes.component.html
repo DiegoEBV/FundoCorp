@@ -1,0 +1,183 @@
+<div class="container-fluid p-0 animate-fade-in">
+  <!-- Encabezado de Reportes -->
+  <div class="mb-4">
+    <h3 class="fw-bold mb-1">Reportes de Telemetría e Historial</h3>
+    <p class="text-muted small">Generación de informes de consumo de agua subterránea y auditoría de red</p>
+  </div>
+
+  <!-- Alerta de descarga exitosa -->
+  <div *ngIf="descargaCompletada()" class="alert alert-success alert-dismissible fade show d-flex align-items-center animate-fade-in" role="alert">
+    <i class="bi bi-cloud-arrow-down-fill me-2 fs-5"></i>
+    <div>{{ descargaCompletada() }}</div>
+    <button type="button" class="btn-close" (click)="descargaCompletada.set(null)" aria-label="Close"></button>
+  </div>
+
+  <!-- Fila de Cumplimiento Normativo (ANA/MTC) -->
+  <div class="row g-4 mb-4">
+    <!-- Ficha Normas ANA -->
+    <div class="col-12 col-xl-6">
+      <div class="card card-premium p-4 h-100 bg-gradient-ana text-white">
+        <div class="d-flex align-items-center gap-2.5 mb-2.5">
+          <i class="bi bi-file-earmark-lock-fill fs-3 text-warning"></i>
+          <h5 class="fw-bold mb-0">Cumplimiento de Gestión Hídrica (ANA)</h5>
+        </div>
+        <p class="small opacity-90 mb-3">La Autoridad Nacional del Agua exige la transmisión telemétrica periódica de volúmenes de extracción subterránea para regular el acuífero de Ica.</p>
+        
+        <div class="d-flex flex-column gap-2 small mb-3">
+          <div class="d-flex gap-2">
+            <i class="bi bi-patch-check-fill text-warning"></i>
+            <span><strong>R.J. N° 0092-2026-ANA:</strong> Reporte telemétrico automatizado cada 24 horas del estado de extracción de pozos.</span>
+          </div>
+          <div class="d-flex gap-2">
+            <i class="bi bi-patch-check-fill text-warning"></i>
+            <span><strong>R.J. N° 0010-2025-ANA:</strong> Acreditación técnica y homologación de medidores de caudal.</span>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-auto">
+          <button 
+            type="button" 
+            class="btn btn-warning btn-sm fw-semibold" 
+            (click)="exportarReporte('PDF', 'R.J. N° 0092-2026-ANA')">
+            <i class="bi bi-file-pdf me-1"></i>Descargar PDF ANA
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-light btn-sm" 
+            (click)="exportarReporte('CSV', 'R.J. N° 0092-2026-ANA')">
+            <i class="bi bi-filetype-csv me-1"></i>Exportar CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ficha Ley de Protección de Datos -->
+    <div class="col-12 col-xl-6">
+      <div class="card card-premium p-4 h-100 bg-gradient-legal text-white">
+        <div class="d-flex align-items-center gap-2.5 mb-2.5">
+          <i class="bi bi-shield-fill-check fs-3 text-cyan"></i>
+          <h5 class="fw-bold mb-0">Protección de Datos y Ciberseguridad</h5>
+        </div>
+        <p class="small opacity-90 mb-3">Toda la transmisión LoRaWAN (frecuencia AU915) opera con cifrado nativo de enlace AES-128 cumpliendo la Ley N.° 29733 de Protección de Datos en Perú.</p>
+        
+        <div class="d-flex flex-column gap-2 small mb-3">
+          <div class="d-flex gap-2">
+            <i class="bi bi-lock-fill text-cyan"></i>
+            <span><strong>Cifrado Extremo a Extremo:</strong> Claves de sesión separadas AppSKey y NwkSKey.</span>
+          </div>
+          <div class="d-flex gap-2">
+            <i class="bi bi-people-fill text-cyan"></i>
+            <span><strong>Privacidad por Diseño:</strong> Auditoría de accesos al variador Delta MS300 por rol.</span>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-auto">
+          <button 
+            type="button" 
+            class="btn btn-cyan btn-sm fw-semibold text-dark" 
+            (click)="exportarReporte('PDF', 'Ley N.º 29733 / ISO 27001')">
+            <i class="bi bi-shield-lock-fill me-1"></i>Auditoría ISO 27001
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de Datos Históricos con Filtros -->
+  <div class="card card-premium p-4">
+    <!-- Filtros Rápidos -->
+    <div class="row g-3 align-items-end mb-4 border-bottom pb-3">
+      <!-- Filtro Fundo -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <label for="fundoFilter" class="form-label text-muted small fw-semibold">Filtrar por Fundo</label>
+        <select 
+          id="fundoFilter" 
+          class="form-select form-control-premium" 
+          [(ngModel)]="selectedFundoId">
+          <option value="TODOS">Todos los Fundos</option>
+          <option *ngFor="let f of fundos()" [value]="f.idFundo">{{ f.nombre }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro Estado Válvula -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <label for="valvFilter" class="form-label text-muted small fw-semibold">Estado Riego</label>
+        <select 
+          id="valvFilter" 
+          class="form-select form-control-premium" 
+          [(ngModel)]="filtroValvula">
+          <option value="TODOS">Todos los estados</option>
+          <option value="ABIERTO">Riego Activo (Válvula Abierta)</option>
+          <option value="CERRADO">Inactivo (Válvula Cerrada)</option>
+        </select>
+      </div>
+
+      <!-- Cuadro de Búsqueda -->
+      <div class="col-12 col-md-4">
+        <label for="searchFilter" class="form-label text-muted small fw-semibold">Buscar por ID de Controlador</label>
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+          <input 
+            type="text" 
+            id="searchFilter"
+            class="form-control form-control-premium border-start-0 ps-0" 
+            placeholder="Ej: 201" 
+            [(ngModel)]="searchQuery">
+        </div>
+      </div>
+
+      <div class="col-12 col-md-2 text-md-end">
+        <span class="text-muted small d-block mb-1">Registros: <strong>{{ lecturasFiltradas().length }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Grilla de Resultados -->
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase;">ID Lectura</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase;">Controlador</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase; text-align: center;">Humedad Suelo</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase; text-align: center;">Perfil (30/60/90 cm)</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase; text-align: center;">Rad. Solar</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase; text-align: center;">Cond. Eléc.</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase; text-align: center;">Temp.</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase; text-align: center;">Riego</th>
+            <th scope="col" style="font-size: 0.8rem; text-transform: uppercase;">Fecha y Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of lecturasFiltradas()">
+            <td class="small text-muted fw-mono">#{{ row.idLectura }}</td>
+            <td>
+              <span class="fw-semibold small">{{ getControladorNombre(row.idControlador) }}</span>
+              <span class="text-muted d-block small" style="font-size: 0.75rem;">ID: {{ row.idControlador }}</span>
+            </td>
+            <td class="text-center fw-bold">{{ row.humedad }}%</td>
+            <td class="text-center small text-muted">
+              {{ row.humedad30 }}% / {{ row.humedad60 }}% / {{ row.humedad90 }}%
+            </td>
+            <td class="text-center">{{ row.radiacion }} W/m²</td>
+            <td class="text-center">{{ row.conductividad }} dS/m</td>
+            <td class="text-center">{{ row.temperatura }} °C</td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="row.valvula ? 'bg-success' : 'bg-secondary'">
+                {{ row.valvula ? 'ABIERTO' : 'CERRADO' }}
+              </span>
+            </td>
+            <td class="small">{{ row.fechaHora | date:'medium' }}</td>
+          </tr>
+          
+          <tr *ngIf="lecturasFiltradas().length === 0">
+            <td colspan="9" class="text-center py-4 text-muted">
+              No se encontraron registros que coincidan con los filtros aplicados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>

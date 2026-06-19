@@ -1,0 +1,22 @@
+.fw-mono {
+  font-family: var(--bs-font-monospace);
+}
+
+tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+
+[data-theme="dark"] tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.01) !important;
+}
+
+[data-theme="dark"] .table-light {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .table {
+  color: #f1f5f9;
+  border-color: #1e293b;
+}

@@ -1,0 +1,88 @@
+.icon-box {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-light-primary {
+  background-color: rgba(37, 99, 235, 0.1);
+}
+.bg-light-success {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+.bg-light-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+.bg-light-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+.bg-light-info {
+  background-color: rgba(6, 182, 212, 0.1);
+}
+
+/* Background ahorros corporativos */
+.bg-gradient-save {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .bg-gradient-save {
+  background: linear-gradient(135deg, #151f32 0%, #0b0f19 100%);
+}
+
+.text-cyan {
+  color: #22d3ee !important;
+}
+
+.text-neon {
+  color: #34d399 !important;
+}
+
+.border-white-10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.count-number {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.05rem;
+}
+
+/* Alertas de Telemetría */
+.bg-light-danger-subtle {
+  background-color: rgba(239, 68, 68, 0.05);
+}
+.bg-light-warning-subtle {
+  background-color: rgba(245, 158, 11, 0.05);
+}
+.bg-light-info-subtle {
+  background-color: rgba(6, 182, 212, 0.05);
+}
+
+.alert-premium-item {
+  transition: transform 0.2s ease;
+}
+.alert-premium-item:hover {
+  transform: translateX(3px);
+}
+
+.spinner-animation {
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.alerts-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+.alerts-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 2px;
+}
+[data-theme="dark"] .alerts-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+}

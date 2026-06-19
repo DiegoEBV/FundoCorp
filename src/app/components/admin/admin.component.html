@@ -1,0 +1,312 @@
+<div class="container-fluid p-0 animate-fade-in">
+  <!-- Encabezado de Administración -->
+  <div class="mb-4">
+    <h3 class="fw-bold mb-1">Módulo de Configuración</h3>
+    <p class="text-muted small">Administración de Fundos, Gateways, Controladores e interacción de Usuarios</p>
+  </div>
+
+  <!-- Botones de Navegación de Pestañas -->
+  <div class="card card-premium p-2 mb-4 bg-light border-0">
+    <div class="d-flex flex-wrap gap-2">
+      <button 
+        type="button" 
+        class="btn btn-sm px-4 py-2 fw-semibold rounded"
+        [ngClass]="activeTab() === 'fundos' ? 'btn-primary-premium' : 'btn-light border-0 text-muted'"
+        (click)="activeTab.set('fundos')">
+        <i class="bi bi-map me-2"></i>Fundos (Campos)
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-sm px-4 py-2 fw-semibold rounded"
+        [ngClass]="activeTab() === 'gateways' ? 'btn-primary-premium' : 'btn-light border-0 text-muted'"
+        (click)="activeTab.set('gateways')">
+        <i class="bi bi-router me-2"></i>Gateways LoRa
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-sm px-4 py-2 fw-semibold rounded"
+        [ngClass]="activeTab() === 'controladores' ? 'btn-primary-premium' : 'btn-light border-0 text-muted'"
+        (click)="activeTab.set('controladores')">
+        <i class="bi bi-cpu me-2"></i>Controladores / Bombas
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-sm px-4 py-2 fw-semibold rounded"
+        [ngClass]="activeTab() === 'usuarios' ? 'btn-primary-premium' : 'btn-light border-0 text-muted'"
+        (click)="activeTab.set('usuarios')">
+        <i class="bi bi-people-fill me-2"></i>Asignar Fundos
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido de las Pestañas -->
+  
+  <!-- TAB FUNDOS -->
+  <div *ngIf="activeTab() === 'fundos'" class="row g-4 animate-fade-in">
+    <!-- Formulario Crear Fundo -->
+    <div class="col-12 col-lg-4">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Registrar Nuevo Fundo</h5>
+        <form (ngSubmit)="guardarFundo()">
+          <div class="mb-3">
+            <label for="funNombre" class="form-label text-muted small fw-semibold">Nombre del Fundo</label>
+            <input type="text" id="funNombre" [(ngModel)]="nuevoFundo.nombre" name="nombre" class="form-control form-control-premium" placeholder="Ej: Fundo Villacurí" required>
+          </div>
+          <div class="mb-3">
+            <label for="funUbi" class="form-label text-muted small fw-semibold">Ubicación</label>
+            <input type="text" id="funUbi" [(ngModel)]="nuevoFundo.ubicacion" name="ubicacion" class="form-control form-control-premium" placeholder="Ej: Ica - Villacurí" required>
+          </div>
+          <div class="mb-4">
+            <label for="funHect" class="form-label text-muted small fw-semibold">Hectáreas de Extensión</label>
+            <input type="number" id="funHect" [(ngModel)]="nuevoFundo.hectareas" name="hectareas" class="form-control form-control-premium" placeholder="Hectáreas" required>
+          </div>
+          <button type="submit" class="btn btn-primary-premium w-100 py-2">
+            <i class="bi bi-plus-circle me-1"></i>Añadir Fundo
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Lista de Fundos -->
+    <div class="col-12 col-lg-8">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Lista de Fundos Configurados</h5>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Ubicación</th>
+                <th class="text-center">Hectáreas</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let f of fundos()">
+                <td class="small text-muted fw-mono">#{{ f.idFundo }}</td>
+                <td class="fw-semibold">{{ f.nombre }}</td>
+                <td>{{ f.ubicacion }}</td>
+                <td class="text-center">{{ f.hectareas }} ha</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarFundo(f.idFundo)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB GATEWAYS -->
+  <div *ngIf="activeTab() === 'gateways'" class="row g-4 animate-fade-in">
+    <!-- Formulario Crear Gateway -->
+    <div class="col-12 col-lg-4">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Registrar Gateway</h5>
+        <form (ngSubmit)="guardarGateway()">
+          <div class="mb-3">
+            <label for="gwFundo" class="form-label text-muted small fw-semibold">Asociar a Fundo</label>
+            <select id="gwFundo" [(ngModel)]="nuevoGateway.idFundo" name="idFundo" class="form-select form-control-premium">
+              <option *ngFor="let f of fundos()" [value]="f.idFundo">{{ f.nombre }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="gwModelo" class="form-label text-muted small fw-semibold">Modelo de Gateway</label>
+            <input type="text" id="gwModelo" [(ngModel)]="nuevoGateway.modelo" name="modelo" class="form-control form-control-premium" placeholder="Ej: Milesight UG67" required>
+          </div>
+          <div class="mb-3">
+            <label for="gwIp" class="form-label text-muted small fw-semibold">Dirección IP de Enlace</label>
+            <input type="text" id="gwIp" [(ngModel)]="nuevoGateway.ipGateway" name="ipGateway" class="form-control form-control-premium" placeholder="Ej: 192.168.0.22" required>
+          </div>
+          <div class="mb-3">
+            <label for="gwUbi" class="form-label text-muted small fw-semibold">Ubicación Física</label>
+            <input type="text" id="gwUbi" [(ngModel)]="nuevoGateway.ubicacion" name="ubicacion" class="form-control form-control-premium" placeholder="Ej: Caseta Bomba Lote B" required>
+          </div>
+          <button type="submit" class="btn btn-primary-premium w-100 py-2">
+            <i class="bi bi-plus-circle me-1"></i>Añadir Gateway
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Gateways -->
+    <div class="col-12 col-lg-8">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Lista de Gateways Configurados</h5>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Modelo</th>
+                <th>IP Enlace</th>
+                <th>Ubicación</th>
+                <th>Fundo Asociado</th>
+                <th class="text-center">Estado</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let g of gateways()">
+                <td class="small text-muted fw-mono">#{{ g.idGateway }}</td>
+                <td class="fw-semibold">{{ g.modelo }}</td>
+                <td>{{ g.ipGateway }}</td>
+                <td>{{ g.ubicacion }}</td>
+                <td>{{ getFundoNombre(g.idFundo) }}</td>
+                <td class="text-center">
+                  <span class="badge" [ngClass]="g.estado === 'ACTIVO' ? 'bg-success' : 'bg-danger'">
+                    {{ g.estado }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarGateway(g.idGateway)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB CONTROLADORES -->
+  <div *ngIf="activeTab() === 'controladores'" class="row g-4 animate-fade-in">
+    <!-- Formulario Crear Controlador -->
+    <div class="col-12 col-lg-4">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Registrar Controlador</h5>
+        <form (ngSubmit)="guardarControlador()">
+          <div class="mb-3">
+            <label for="ctrlGw" class="form-label text-muted small fw-semibold">Asociar a Gateway</label>
+            <select id="ctrlGw" [(ngModel)]="nuevoControlador.idGateway" name="idGateway" class="form-select form-control-premium">
+              <option *ngFor="let g of gateways()" [value]="g.idGateway">{{ g.modelo }} ({{ g.ubicacion }})</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="ctrlNombre" class="form-label text-muted small fw-semibold">Nombre</label>
+            <input type="text" id="ctrlNombre" [(ngModel)]="nuevoControlador.nombre" name="nombre" class="form-control form-control-premium" placeholder="Ej: Controlador Sector 4" required>
+          </div>
+          <div class="mb-3">
+            <label for="ctrlModelo" class="form-label text-muted small fw-semibold">Modelo de Equipo</label>
+            <select id="ctrlModelo" [(ngModel)]="nuevoControlador.modelo" name="modelo" class="form-select form-control-premium">
+              <option value="Milesight UC511">Milesight UC511 (Electroválvula Riego)</option>
+              <option value="Advantech ECU-1251">Advantech ECU-1251 (Bomba VFD)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="ctrlUbi" class="form-label text-muted small fw-semibold">Ubicación Física</label>
+            <input type="text" id="ctrlUbi" [(ngModel)]="nuevoControlador.ubicacion" name="ubicacion" class="form-control form-control-premium" placeholder="Ej: Lote A Sector 4" required>
+          </div>
+          <button type="submit" class="btn btn-primary-premium w-100 py-2">
+            <i class="bi bi-plus-circle me-1"></i>Añadir Controlador
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Controladores -->
+    <div class="col-12 col-lg-8">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Lista de Controladores Activos</h5>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Modelo</th>
+                <th>Ubicación</th>
+                <th>Gateway Puente</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of controladores()">
+                <td class="small text-muted fw-mono">#{{ c.idControlador }}</td>
+                <td class="fw-semibold">{{ c.nombre }}</td>
+                <td>
+                  <span class="badge" [ngClass]="c.modelo.includes('Advantech') ? 'bg-warning text-dark' : 'bg-primary'">
+                    {{ c.modelo }}
+                  </span>
+                </td>
+                <td>{{ c.ubicacion }}</td>
+                <td>{{ getGatewayNombre(c.idGateway) }}</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarControlador(c.idControlador)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB USUARIOS ASIGNACIONES -->
+  <div *ngIf="activeTab() === 'usuarios'" class="row g-4 animate-fade-in">
+    <!-- Formulario Crear Asignación -->
+    <div class="col-12 col-lg-4">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Asignar Personal a Fundo</h5>
+        <p class="text-muted small">Crea asociaciones de usuarios de campo para delimitar el acceso a los sectores de riego</p>
+        <form (ngSubmit)="guardarAsignacion()">
+          <div class="mb-3">
+            <label for="asigUser" class="form-label text-muted small fw-semibold">Seleccionar Usuario</label>
+            <select id="asigUser" [(ngModel)]="nuevaAsignacion.idUsuario" name="idUsuario" class="form-select form-control-premium">
+              <option *ngFor="let u of usuarios()" [value]="u.idUsuario">{{ u.nombres }} ({{ u.rol }})</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label for="asigFundo" class="form-label text-muted small fw-semibold">Asignar a Campo</label>
+            <select id="asigFundo" [(ngModel)]="nuevaAsignacion.idFundo" name="idFundo" class="form-select form-control-premium">
+              <option *ngFor="let f of fundos()" [value]="f.idFundo">{{ f.nombre }}</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary-premium w-100 py-2">
+            <i class="bi bi-link me-1"></i>Asignar Responsabilidad
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Asignaciones (UsuarioFundo) -->
+    <div class="col-12 col-lg-8">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3">Asignaciones de Campo Vigentes</h5>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Fundo</th>
+                <th>Usuario Asignado</th>
+                <th>Fecha de Asignación</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of asignaciones()">
+                <td class="fw-semibold">{{ getFundoNombre(a.idFundo) }}</td>
+                <td>{{ getUsuarioNombre(a.idUsuario) }}</td>
+                <td>{{ a.fechaAsignacion | date:'mediumDate' }}</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="eliminarAsignacion(a.idFundo, a.idUsuario)">
+                    <i class="bi bi-unlink"></i> Desvincular
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

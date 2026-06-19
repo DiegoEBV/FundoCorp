@@ -1,0 +1,159 @@
+<div class="container-fluid p-0 animate-fade-in">
+  
+  <!-- Encabezado del Dashboard -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-1">Consola Central de Operaciones</h3>
+      <p class="text-muted small">Estado actual e indicadores de telemetría IoT de FundoCorp</p>
+    </div>
+    
+    <!-- Botón de Sincronización con Spring Boot/Field Gateways -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-muted small">Última lectura: <strong class="text-primary">{{ tiempoTranscurridoText() }}</strong></span>
+      <button 
+        class="btn btn-outline-secondary btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center" 
+        [disabled]="refrescando()" 
+        (click)="manualRefresh()" 
+        title="Forzar lectura manual LoRaWAN">
+        <i class="bi bi-arrow-clockwise" [ngClass]="{'spinner-animation': refrescando()}"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Fila 1: Tarjetas de Estado (Métricas de Negocio / Técnicas) -->
+  <div class="row g-3 mb-4">
+    <!-- Tarjeta Hectáreas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card card-premium p-3 d-flex flex-row align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold text-uppercase tracking-wider">Hectáreas de Riego</span>
+          <h3 class="fw-bold my-1">4,500 <span class="fs-6 text-muted font-normal">ha</span></h3>
+          <span class="text-success small fw-semibold"><i class="bi bi-compass me-1"></i>3 Fundos Activos</span>
+        </div>
+        <div class="icon-box bg-light-primary rounded p-3 text-primary">
+          <i class="bi bi-map fs-3"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta Humedad Promedio -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card card-premium p-3 d-flex flex-row align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold text-uppercase tracking-wider">Humedad Suelo</span>
+          <h3 class="fw-bold my-1" [ngClass]="{'text-danger': humedadPromedio() < 25, 'text-success': humedadPromedio() >= 25}">
+            {{ humedadPromedio() }}%
+          </h3>
+          <span class="small" [ngClass]="{'text-danger': humedadPromedio() < 25, 'text-success': humedadPromedio() >= 25}">
+            <i class="bi" [ngClass]="humedadPromedio() < 25 ? 'bi-water text-danger' : 'bi-check-circle-fill'"></i>
+            {{ humedadPromedio() < 25 ? 'Estrés Hídrico Alto' : 'Nivel Óptimo' }}
+          </span>
+        </div>
+        <div class="icon-box rounded p-3" [ngClass]="{'bg-light-danger text-danger': humedadPromedio() < 25, 'bg-light-success text-success': humedadPromedio() >= 25}">
+          <i class="bi bi-droplet fs-3"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta Estado de Red -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card card-premium p-3 d-flex flex-row align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold text-uppercase tracking-wider">Red LoRaWAN</span>
+          <h3 class="fw-bold my-1">{{ gatewaysActivos() }}/{{ totalGateways() }}</h3>
+          <span class="text-muted small">Gateways Homologados MTC</span>
+        </div>
+        <div class="icon-box rounded p-3 bg-light-warning text-warning" *ngIf="gatewaysActivos() < totalGateways()">
+          <i class="bi bi-router fs-3"></i>
+        </div>
+        <div class="icon-box rounded p-3 bg-light-success text-success" *ngIf="gatewaysActivos() === totalGateways()">
+          <i class="bi bi-router fs-3"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta Actuadores / Válvulas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card card-premium p-3 d-flex flex-row align-items-center justify-content-between">
+        <div>
+          <span class="text-muted small fw-semibold text-uppercase tracking-wider">Válvulas en Operación</span>
+          <h3 class="fw-bold my-1">{{ valvulasAbiertas() }} Abiertas</h3>
+          <span class="text-muted small">De {{ totalControladores() }} controladores en campo</span>
+        </div>
+        <div class="icon-box bg-light-info rounded p-3 text-info">
+          <i class="bi bi-outlet fs-3"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila 2: Ahorro de Agua e Impacto Financiero en Vivo (Premium Widget) -->
+  <div class="card card-premium bg-gradient-save p-4 mb-4">
+    <div class="row align-items-center text-white">
+      <div class="col-12 col-lg-6 mb-3 mb-lg-0">
+        <h4 class="fw-bold mb-2"><i class="bi bi-shield-fill-check me-2"></i>Impacto Ecológico y Económico (Hoy)</h4>
+        <p class="mb-0 opacity-80 small">Basado en la optimización del riego inteligente del 35% en cultivos de uva de mesa de FundoCorp en Ica, reduciendo costos de extracción de pozos profundos.</p>
+      </div>
+      <div class="col-6 col-lg-3 text-center border-start border-white-10">
+        <span class="small opacity-85 text-uppercase tracking-wider">Agua Subterránea Ahorrada</span>
+        <h2 class="fw-bold mb-0 mt-1 count-number text-cyan">{{ aguaAhorradaM3() }} m³</h2>
+      </div>
+      <div class="col-6 col-lg-3 text-center border-start border-white-10">
+        <span class="small opacity-85 text-uppercase tracking-wider">Ahorro Estimado Energía</span>
+        <h2 class="fw-bold mb-0 mt-1 count-number text-neon">$ {{ dolaresAhorrados() }} USD</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila 3: Gráficas de Telemetría Reciente -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-lg-8">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3"><i class="bi bi-graph-up text-primary me-2"></i>Historial de Humedad del Suelo (Promedio)</h5>
+        <div id="chart-humidity">
+          <apx-chart
+            [series]="chartOptionsHum.series"
+            [chart]="chartOptionsHum.chart"
+            [xaxis]="chartOptionsHum.xaxis"
+            [stroke]="chartOptionsHum.stroke"
+            [colors]="chartOptionsHum.colors"
+            [grid]="chartOptionsHum.grid"
+            [dataLabels]="chartOptionsHum.dataLabels">
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Alertas y Eventos Recientes -->
+    <div class="col-12 col-lg-4">
+      <div class="card card-premium p-4 h-100">
+        <h5 class="fw-bold mb-3"><i class="bi bi-bell-fill text-warning me-2"></i>Alertas de Campo (Línea)</h5>
+        <div class="alerts-wrapper d-flex flex-column gap-3 overflow-y-auto" style="max-height: 250px;">
+          <div *ngFor="let alerta of alertasCriticas()" class="alert-premium-item d-flex gap-3 p-2 rounded border-start border-4" 
+               [ngClass]="{
+                 'border-danger bg-light-danger-subtle': alerta.tipo === 'danger',
+                 'border-warning bg-light-warning-subtle': alerta.tipo === 'warning',
+                 'border-info bg-light-info-subtle': alerta.tipo === 'info'
+               }">
+            <div class="alert-icon" [ngClass]="{
+                 'text-danger': alerta.tipo === 'danger',
+                 'text-warning': alerta.tipo === 'warning',
+                 'text-info': alerta.tipo === 'info'
+               }">
+              <i class="bi" [ngClass]="{
+                 'bi-exclamation-octagon-fill': alerta.tipo === 'danger',
+                 'bi-exclamation-triangle-fill': alerta.tipo === 'warning',
+                 'bi-info-circle-fill': alerta.tipo === 'info'
+               }"></i>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-0 small text-main font-semibold">{{ alerta.msg }}</p>
+              <span class="text-muted" style="font-size: 0.7rem;">{{ alerta.hora }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

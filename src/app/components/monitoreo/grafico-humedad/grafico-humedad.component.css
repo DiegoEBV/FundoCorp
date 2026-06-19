@@ -1,0 +1,45 @@
+.bg-light-blue {
+  background-color: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.bg-light-green {
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15) !important;
+}
+
+.bg-light-orange {
+  background-color: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-light-blue {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+[data-theme="dark"] .bg-light-green {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+[data-theme="dark"] .bg-light-orange {
+  background-color: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+.gauge-bar {
+  display: flex;
+  align-items: flex-end;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .gauge-bar {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.chart-container {
+  min-height: 320px;
+}

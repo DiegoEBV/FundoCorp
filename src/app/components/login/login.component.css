@@ -1,0 +1,68 @@
+.login-container {
+  min-height: 100vh;
+  width: 100vw;
+  /* Fondo dinámico premium que se adapta con variables CSS */
+  background: radial-gradient(circle at 10% 20%, var(--bg-body) 0%, var(--border-color) 90%);
+  padding: 1.5rem;
+}
+
+[data-theme="dark"] .login-container {
+  background: radial-gradient(circle at 10% 20%, #111827 0%, #030712 100%);
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  background-color: rgba(37, 99, 235, 0.1);
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+[data-theme="dark"] .brand-logo {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+.demo-login-box {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+[data-theme="dark"] .demo-login-box {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.demo-login-box button {
+  font-size: 0.8rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.input-group-text {
+  border-color: var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-muted);
+}
+
+.input-group-text button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--text-muted);
+}
+.input-group-text button:focus {
+  outline: none;
+}
+.form-control-premium {
+  border-color: var(--border-color);
+}
+.form-control-premium:focus {
+  border-color: var(--primary);
+  box-shadow: none;
+}
+.input-group:focus-within .input-group-text {
+  border-color: var(--primary);
+}
+.input-group:focus-within .form-control-premium {
+  border-color: var(--primary);
+}

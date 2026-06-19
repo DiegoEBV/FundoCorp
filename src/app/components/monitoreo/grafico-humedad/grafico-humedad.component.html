@@ -1,0 +1,112 @@
+<div *ngIf="ultimaLectura(); else noData" class="animate-fade-in">
+  
+  <!-- Fila de Indicadores Rápidos de la Sonda de Campo -->
+  <div class="row g-3 mb-4">
+    <!-- Humedad 30cm -->
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card p-3 border-0 bg-light-blue shadow-sm d-flex align-items-center justify-content-between flex-row">
+        <div>
+          <span class="text-muted small fw-semibold">Sonda 30 cm</span>
+          <h3 class="fw-bold my-1 text-primary">{{ ultimaLectura()?.humedad30 }}%</h3>
+          <span class="small text-muted">Humedad superficial</span>
+        </div>
+        <div class="gauge-bar" [style.height.%]="ultimaLectura()?.humedad30" style="width: 12px; background-color: #3b82f6; border-radius: 4px; height: 50px;"></div>
+      </div>
+    </div>
+
+    <!-- Humedad 60cm -->
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card p-3 border-0 bg-light-green shadow-sm d-flex align-items-center justify-content-between flex-row">
+        <div>
+          <span class="text-muted small fw-semibold">Sonda 60 cm</span>
+          <h3 class="fw-bold my-1 text-success">{{ ultimaLectura()?.humedad60 }}%</h3>
+          <span class="small text-muted">Humedad de raíces medias</span>
+        </div>
+        <div class="gauge-bar" [style.height.%]="ultimaLectura()?.humedad60" style="width: 12px; background-color: #10b981; border-radius: 4px; height: 50px;"></div>
+      </div>
+    </div>
+
+    <!-- Humedad 90cm -->
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card p-3 border-0 bg-light-orange shadow-sm d-flex align-items-center justify-content-between flex-row">
+        <div>
+          <span class="text-muted small fw-semibold">Sonda 90 cm</span>
+          <h3 class="fw-bold my-1 text-warning">{{ ultimaLectura()?.humedad90 }}%</h3>
+          <span class="small text-muted">Humedad profunda</span>
+        </div>
+        <div class="gauge-bar" [style.height.%]="ultimaLectura()?.humedad90" style="width: 12px; background-color: #f59e0b; border-radius: 4px; height: 50px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila de Variables Ambientales Secundarias -->
+  <div class="row g-3 mb-4">
+    <!-- Conductividad Eléctrica (Fertirriego) -->
+    <div class="col-12 col-md-4">
+      <div class="card card-premium p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-lightning text-warning fs-5"></i>
+          <span class="text-muted small fw-semibold">Conductividad Eléctrica</span>
+        </div>
+        <h4 class="fw-bold mb-1">{{ ultimaLectura()?.conductividad }} <span class="fs-6 text-muted fw-normal">dS/m</span></h4>
+        <span class="small" [ngClass]="(ultimaLectura()?.conductividad || 0) > 1.5 ? 'text-danger' : 'text-success'">
+          {{ (ultimaLectura()?.conductividad || 0) > 1.5 ? 'Salinidad Alta' : 'Salinidad Óptima' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Temperatura Suelo -->
+    <div class="col-12 col-md-4">
+      <div class="card card-premium p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-thermometer-half text-danger fs-5"></i>
+          <span class="text-muted small fw-semibold">Temperatura Suelo</span>
+        </div>
+        <h4 class="fw-bold mb-1">{{ ultimaLectura()?.temperatura }} <span class="fs-6 text-muted fw-normal">°C</span></h4>
+        <span class="text-muted small">Útil para Déficit Presión Vapor</span>
+      </div>
+    </div>
+
+    <!-- Radiación Solar -->
+    <div class="col-12 col-md-4">
+      <div class="card card-premium p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-sun text-warning fs-5"></i>
+          <span class="text-muted small fw-semibold">Radiación Solar</span>
+        </div>
+        <h4 class="fw-bold mb-1">{{ ultimaLectura()?.radiacion }} <span class="fs-6 text-muted fw-normal">W/m²</span></h4>
+        <span class="text-muted small">Cálculo de Evapotranspiración (ETo)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel del Gráfico de Líneas de Humedad -->
+  <div class="card card-premium p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0">Dinámica de Humedad del Perfil del Suelo</h5>
+      <span class="text-muted small">Última lectura LoRaWAN: {{ formatearFecha(ultimaLectura()!.fechaHora) }}</span>
+    </div>
+    
+    <div *ngIf="chartOptions" class="chart-container">
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [stroke]="chartOptions.stroke"
+        [colors]="chartOptions.colors"
+        [grid]="chartOptions.grid"
+        [tooltip]="chartOptions.tooltip"
+        [markers]="chartOptions.markers">
+      </apx-chart>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #noData>
+  <div class="text-center py-5">
+    <i class="bi bi-cpu fs-1 text-muted mb-3 d-block"></i>
+    <h5 class="fw-semibold">Cargando Telemetría...</h5>
+    <p class="text-muted small">Verificando conexión con el controlador del pozo/sensor</p>
+  </div>
+</ng-template>

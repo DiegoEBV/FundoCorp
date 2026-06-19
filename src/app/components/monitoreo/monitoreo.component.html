@@ -1,0 +1,27 @@
+<div class="container-fluid p-0 animate-fade-in">
+  <!-- Encabezado de Monitoreo -->
+  <div class="mb-4">
+    <h3 class="fw-bold mb-1">Telemetría y Sondas de Campo</h3>
+    <p class="text-muted small">Visualización detallada de variables edafoclimáticas en pozos y lotes de cultivo</p>
+  </div>
+
+  <!-- Panel de Filtros -->
+  <div class="card card-premium p-4 mb-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-funnel-fill text-primary me-2"></i>Filtros de Red IoT</h5>
+    <app-monitoreo-filtros (controladorSeleccionado)="onControladorSeleccionado($event)"></app-monitoreo-filtros>
+  </div>
+
+  <!-- Detalle y Gráficos -->
+  <div *ngIf="selectedControladorId(); else noSelection">
+    <app-grafico-humedad [idControlador]="selectedControladorId()!"></app-grafico-humedad>
+  </div>
+
+  <!-- Plantilla cuando no hay selección activa -->
+  <ng-template #noSelection>
+    <div class="card card-premium p-5 text-center">
+      <i class="bi bi-broadcast fs-1 text-muted mb-3"></i>
+      <h5 class="fw-bold">Esperando señal de red...</h5>
+      <p class="text-muted small max-width-xs mx-auto">Selecciona un fundo, gateway y controlador en los filtros superiores para desplegar las gráficas del perfil de humedad.</p>
+    </div>
+  </ng-template>
+</div>

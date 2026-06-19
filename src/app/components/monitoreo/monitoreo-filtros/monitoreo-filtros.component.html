@@ -1,0 +1,47 @@
+<div class="row g-3">
+  <!-- Selección de Fundo -->
+  <div class="col-12 col-md-4">
+    <label for="fundoSelect" class="form-label text-muted small fw-semibold">Seleccionar Fundo</label>
+    <select 
+      id="fundoSelect" 
+      class="form-select form-control-premium" 
+      [value]="selectedFundoId()" 
+      (change)="onFundoChange($event)">
+      <option *ngFor="let f of fundosList()" [value]="f.idFundo">
+        {{ f.nombre }} ({{ f.hectareas }} ha)
+      </option>
+    </select>
+  </div>
+
+  <!-- Selección de Gateway -->
+  <div class="col-12 col-md-4">
+    <label for="gatewaySelect" class="form-label text-muted small fw-semibold">Gateway LoRaWAN</label>
+    <select 
+      id="gatewaySelect" 
+      class="form-select form-control-premium"
+      [disabled]="gatewaysList().length === 0"
+      [value]="selectedGatewayId()"
+      (change)="onGatewayChange($event)">
+      <option *ngFor="let g of gatewaysList()" [value]="g.idGateway">
+        {{ g.modelo }} - {{ g.ubicacion }}
+      </option>
+      <option *ngIf="gatewaysList().length === 0" value="">Sin gateways asignados</option>
+    </select>
+  </div>
+
+  <!-- Selección de Controlador/Bomba -->
+  <div class="col-12 col-md-4">
+    <label for="ctrlSelect" class="form-label text-muted small fw-semibold">Controlador / Sensor de Telemetría</label>
+    <select 
+      id="ctrlSelect" 
+      class="form-select form-control-premium"
+      [disabled]="controladoresList().length === 0"
+      [value]="selectedControladorId()"
+      (change)="onControladorChange($event)">
+      <option *ngFor="let c of controladoresList()" [value]="c.idControlador">
+        {{ c.nombre }} ({{ c.modelo }})
+      </option>
+      <option *ngIf="controladoresList().length === 0" value="">Sin controladores activos</option>
+    </select>
+  </div>
+</div>

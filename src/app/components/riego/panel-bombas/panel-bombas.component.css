@@ -1,0 +1,16 @@
+.pump-icon-wrapper {
+  width: 48px;
+  height: 48px;
+}
+.bg-light-success {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+.bg-light-secondary {
+  background-color: rgba(100, 116, 139, 0.1);
+}
+.form-range::-webkit-slider-thumb {
+  background: var(--primary);
+}
+.form-range::-webkit-slider-thumb:active {
+  background-color: var(--primary-hover);
+}

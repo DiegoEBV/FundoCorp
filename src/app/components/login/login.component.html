@@ -1,0 +1,99 @@
+<div class="login-container d-flex align-items-center justify-content-center">
+  <div class="card card-premium glass-panel p-4 p-md-5 animate-fade-in shadow-lg" style="max-width: 480px; width: 100%;">
+    
+    <!-- Encabezado Corporativo -->
+    <div class="text-center mb-4">
+      <div class="brand-logo mb-2 d-inline-flex align-items-center justify-content-center">
+        <i class="bi bi-droplet-half text-primary fs-1"></i>
+      </div>
+      <h2 class="fw-bold mb-1">IcaSmart-Water</h2>
+      <p class="text-muted small">Gestión Inteligente de Recursos Hídricos - FundoCorp</p>
+    </div>
+
+    <!-- Mensaje de Error -->
+    <div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>{{ errorMessage() }}</div>
+    </div>
+
+    <!-- Formulario de Entrada -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Correo Electrónico -->
+      <div class="mb-3">
+        <label for="correo" class="form-label text-muted small fw-semibold">Correo Corporativo</label>
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+          <input 
+            type="email" 
+            id="correo"
+            formControlName="correo"
+            class="form-control form-control-premium border-start-0 ps-0"
+            placeholder="usuario@fundocorp.com"
+            required>
+        </div>
+        <div *ngIf="loginForm.get('correo')?.touched && loginForm.get('correo')?.invalid" class="text-danger small mt-1">
+          Ingrese un correo válido.
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="mb-4">
+        <label for="contrasena" class="form-label text-muted small fw-semibold">Contraseña</label>
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+          <input 
+            [type]="showPassword() ? 'text' : 'password'"
+            id="contrasena"
+            formControlName="contrasena"
+            class="form-control form-control-premium border-start-0 border-end-0 ps-0"
+            placeholder="••••••••"
+            required>
+          <button 
+            type="button" 
+            class="input-group-text bg-transparent border-start-0 text-muted" 
+            (click)="togglePasswordVisibility()">
+            <i class="bi" [ngClass]="showPassword() ? 'bi-eye-slash' : 'bi-eye'"></i>
+          </button>
+        </div>
+        <div *ngIf="loginForm.get('contrasena')?.touched && loginForm.get('contrasena')?.invalid" class="text-danger small mt-1">
+          La contraseña debe tener mínimo 4 caracteres.
+        </div>
+      </div>
+
+      <!-- Botón de Ingreso -->
+      <button 
+        type="submit" 
+        [disabled]="loading() || loginForm.invalid"
+        class="btn btn-primary-premium w-100 py-2 d-flex align-items-center justify-content-center mb-3">
+        <span *ngIf="loading()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        <span>{{ loading() ? 'Iniciando sesión...' : 'Ingresar al Portal' }}</span>
+      </button>
+    </form>
+
+    <!-- Botones de Demostración de Roles -->
+    <div class="demo-login-box mt-4 border-top pt-3">
+      <p class="text-center text-muted small fw-semibold mb-2">Ingreso Rápido de Demostración</p>
+      <div class="d-flex flex-wrap gap-2 justify-content-center">
+        <button 
+          type="button" 
+          class="btn btn-outline-success btn-sm px-3" 
+          (click)="cargarDemoCredenciales('agronomo')">
+          <i class="bi bi-flower1 me-1"></i>Agrónomo
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-primary btn-sm px-3" 
+          (click)="cargarDemoCredenciales('gerente')">
+          <i class="bi bi-briefcase me-1"></i>Gerente
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-info btn-sm px-3" 
+          (click)="cargarDemoCredenciales('regulador')">
+          <i class="bi bi-shield-check me-1"></i>ANA / Regulador
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
