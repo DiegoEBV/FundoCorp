@@ -1,15 +1,15 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Usuario } from '../models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // URL base del backend en Spring Boot (configurable)
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   // Signals para reactividad moderna
   readonly currentUser = signal<Usuario | null>(null);
@@ -32,38 +32,9 @@ export class AuthService {
     }
   }
 
-  // Simulación de inicio de sesión (con preparación para HTTP Real de Spring Boot)
+  // Inicio de sesión contra el backend Spring Boot (POST /api/auth/login)
   login(correo: string, contrasena: string): Observable<Usuario> {
-    // Si queremos habilitar la conexión directa a Spring Boot, descomentar la siguiente línea:
-    // return this.http.post<Usuario>(`${this.apiUrl}/login`, { correo, contrasena }).pipe( ... );
-
-    // Simulación del login (Mock data basada en roles definidos)
-    let mockUser: Usuario;
-
-    if (correo.includes('agronomo')) {
-      mockUser = {
-        idUsuario: 1,
-        nombres: 'Diego Ballon (Agrónomo de Riego)',
-        correo: correo,
-        rol: 'AGRONOMO'
-      };
-    } else if (correo.includes('regulador') || correo.includes('ana')) {
-      mockUser = {
-        idUsuario: 2,
-        nombres: 'Peter Pacherres (Evaluador ANA)',
-        correo: correo,
-        rol: 'REGULADOR'
-      };
-    } else {
-      mockUser = {
-        idUsuario: 3,
-        nombres: 'Sergio Saavedra (Gerente de Producción)',
-        correo: correo,
-        rol: 'GERENTE'
-      };
-    }
-
-    return of(mockUser).pipe(
+    return this.http.post<Usuario>(`${this.apiUrl}/login`, { correo, contrasena }).pipe(
       tap(user => {
         this.currentUser.set(user);
         localStorage.setItem('usuario_sesion', JSON.stringify(user));

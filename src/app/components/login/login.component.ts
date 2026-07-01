@@ -31,9 +31,9 @@ export class LoginComponent {
     // Sincronizar selección de rol si se modifican los campos
     this.loginForm.valueChanges.subscribe(() => {
       const { correo, contrasena } = this.loginForm.value;
-      const agronomoMatch = correo === 'agronomo@fundocorp.com' && contrasena === 'agronomo123';
-      const gerenteMatch = correo === 'gerente@fundocorp.com' && contrasena === 'gerente123';
-      const reguladorMatch = correo === 'regulador@ana.gob.pe' && contrasena === 'regulador123';
+      const agronomoMatch = correo === 'agronomo@fundocorp.com' && contrasena === '123456';
+      const gerenteMatch = correo === 'gerente@fundocorp.com' && contrasena === '123456';
+      const reguladorMatch = correo === 'regulador@ana.gob.pe' && contrasena === '123456';
       
       if (agronomoMatch) {
         this.selectedRole.set('agronomo');
@@ -58,17 +58,17 @@ export class LoginComponent {
     if (rol === 'agronomo') {
       this.loginForm.patchValue({
         correo: 'agronomo@fundocorp.com',
-        contrasena: 'agronomo123'
+        contrasena: '123456'
       });
     } else if (rol === 'gerente') {
       this.loginForm.patchValue({
         correo: 'gerente@fundocorp.com',
-        contrasena: 'gerente123'
+        contrasena: '123456'
       });
     } else if (rol === 'regulador') {
       this.loginForm.patchValue({
         correo: 'regulador@ana.gob.pe',
-        contrasena: 'regulador123'
+        contrasena: '123456'
       });
     }
     this.errorMessage.set(null);

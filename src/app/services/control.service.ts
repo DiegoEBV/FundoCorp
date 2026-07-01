@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export type ValveStatus = 'abierto' | 'cerrado' | 'pendiente' | 'error';
 
@@ -9,7 +10,7 @@ export type ValveStatus = 'abierto' | 'cerrado' | 'pendiente' | 'error';
   providedIn: 'root'
 })
 export class ControlService {
-  private apiUrl = 'http://localhost:8080/api/control';
+  private apiUrl = `${environment.apiUrl}/control`;
 
   // Signals para gestionar el estado de las electroválvulas en la interfaz
   // Llave: idControlador, Valor: Estado actual ('abierto' | 'cerrado' | 'pendiente' | 'error')
@@ -30,7 +31,7 @@ export class ControlService {
 
   constructor(private http: HttpClient) {}
 
-  // Enviar comando para abrir o cerrar una electroválvula con simulación de latencia de red
+  // Enviar comando para abrir o cerrar una electroválvula (POST /api/control/valvula)
   cambiarEstadoValvula(idControlador: number, abrir: boolean): Observable<ValveStatus> {
     // 1. Cambiar el estado en la UI a 'pendiente' inmediatamente para reflejar la latencia LoRaWAN
     this.valvulasState.update(states => ({
@@ -38,41 +39,44 @@ export class ControlService {
       [idControlador]: 'pendiente'
     }));
 
-    // Simulación del endpoint de Spring Boot que enviará el mensaje MQTT
-    // return this.http.post<ValveStatus>(`${this.apiUrl}/valvula`, { idControlador, abrir }).pipe( ... );
-
-    const estadoFinal: ValveStatus = abrir ? 'abierto' : 'cerrado';
-
-    // Retornamos un observable con retraso (delay) de 3 segundos para simular el viaje de ida y vuelta LoRaWAN
-    return of(estadoFinal).pipe(
-      delay(3000), 
+    return this.http.post<{ estado: string }>(`${this.apiUrl}/valvula`, { idControlador, abrir }).pipe(
+      map(res => res.estado as ValveStatus),
       tap(status => {
-        // 2. Al recibir la confirmación, actualizamos el estado final en el Signal
+        // 2. Al recibir la confirmación del backend, actualizamos el estado final en el Signal
         this.valvulasState.update(states => ({
           ...states,
           [idControlador]: status
+        }));
+      }),
+      catchError(err => {
+        this.valvulasState.update(states => ({
+          ...states,
+          [idControlador]: 'error'
+        }));
+        return throwError(() => err);
+      })
+    );
+  }
+
+  // Ajustar la velocidad de frecuencia en un variador de frecuencia de pozo (POST /api/control/bomba)
+  ajustarVelocidadBomba(idControlador: number, hz: number): Observable<number> {
+    const velocidadValida = Math.max(0, Math.min(60, hz));
+
+    return this.http.post<{ idControlador: number; velocidad: number }>(`${this.apiUrl}/bomba`, {
+      idControlador,
+      velocidadValida
+    }).pipe(
+      map(res => res.velocidad),
+      tap(velocidad => {
+        this.bombasSpeed.update(speeds => ({
+          ...speeds,
+          [idControlador]: velocidad
         }));
       })
     );
   }
 
-  // Ajustar la velocidad de frecuencia en un variador de frecuencia de pozo (Delta MS300 VFD)
-  ajustarVelocidadBomba(idControlador: number, hz: number): Observable<number> {
-    // Validar rangos (0 a 60 Hz)
-    const velocidadValida = Math.max(0, Math.min(60, hz));
-
-    // Si es 0 Hz, la válvula/bomba se apaga virtualmente
-    // return this.http.post<number>(`${this.apiUrl}/bomba`, { idControlador, velocidadValida }).pipe( ... );
-
-    this.bombasSpeed.update(speeds => ({
-      ...speeds,
-      [idControlador]: velocidadValida
-    }));
-
-    return of(velocidadValida);
-  }
-
-  // Alternar entre modo Automático e Inteligente (IoT Cloud) y Manual
+  // Alternar entre modo Automático e Inteligente (IoT Cloud) y Manual (estado solo de UI)
   toggleModoRiego(manual: boolean): Observable<boolean> {
     this.riegoManualMode.set(manual);
     return of(manual);

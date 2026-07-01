@@ -52,12 +52,16 @@ src/app/
 ├── models/
 │   └── index.ts          # Modelos de interfaces (Usuario, LecturaSensor, Fundo, etc.)
 ├── services/
-│   ├── auth.service.ts   # Autenticación simulada / conexión preparada a Spring Boot
-│   ├── fundo.service.ts  # Datos de fundos, gateways y controladores activos
-│   ├── control.service.ts# Estado de riego (Modo automático/manual, variadores)
-│   └── telemetry.service.ts # Simulador de telemetría de sensores cada 30 segundos
+│   ├── auth.service.ts   # Autenticación contra el backend Spring Boot (POST /api/auth/login)
+│   ├── fundo.service.ts  # CRUD de fundos, gateways, controladores, usuarios y asignaciones
+│   ├── control.service.ts# Comandos de válvulas/bombas contra /api/control
+│   └── telemetry.service.ts # Lecturas reales desde /api/telemetry + simulación visual en vivo
 ├── app.routes.ts         # Definición de rutas hijas e integración de Lazy Loading
 └── styles.css            # Hoja de estilos global y variables de tema claro/oscuro
+
+src/environments/
+├── environment.ts        # Configuración de desarrollo (apiUrl -> http://localhost:8080/api)
+└── environment.prod.ts   # Configuración de producción (apiUrl -> backend en Render)
 ```
 
 ---
@@ -65,6 +69,7 @@ src/app/
 ## Requisitos Previos
 - Node.js (versión 18 o superior recomendada)
 - npm (administrador de paquetes)
+- El backend [FundoCorp_Backend](https://github.com/DiegoEBV/FundoCorp_Backend) corriendo (local o en Render)
 
 ---
 
@@ -75,25 +80,51 @@ src/app/
    npm install
    ```
 
-2. **Ejecutar servidor de desarrollo**:
+2. **Ejecutar servidor de desarrollo** (usa `src/environments/environment.ts`, `apiUrl: http://localhost:8080/api`):
    ```bash
    npm start
    ```
    *El portal se compilará y estará disponible en `http://localhost:4200/`.*
 
-3. **Compilar para producción**:
+3. **Compilar para producción** (usa `src/environments/environment.prod.ts` vía `fileReplacements`):
    ```bash
-   npm run build
+   npm run build -- --configuration=production
    ```
-   *Los archivos optimizados de distribución se generarán en la carpeta `dist/FundoCorp-Front`.*
+   *Los archivos optimizados de distribución se generarán en `dist/FundoCorp-Front/browser`.*
+
+---
+
+## Conexión con el backend
+
+Los servicios (`auth`, `fundo`, `control`, `telemetry`) consumen la API REST de Spring Boot mediante
+`HttpClient`, usando la URL base definida en `src/environments/environment.ts` (desarrollo) y
+`environment.prod.ts` (producción). Antes de desplegar, actualiza `environment.prod.ts` con la URL
+real del backend en Render, por ejemplo:
+
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://fundocorp-backend.onrender.com/api'
+};
+```
+
+---
+
+## Despliegue en Netlify
+
+El repositorio incluye `netlify.toml` con el comando de build, el directorio de publicación
+(`dist/FundoCorp-Front/browser`) y una regla de redirección para el enrutamiento de Angular (SPA).
+Basta con conectar el repositorio en Netlify; no se requiere configuración manual adicional salvo
+mantener `environment.prod.ts` actualizado con la URL del backend.
 
 ---
 
 ## Credenciales de Acceso de Demostración
-El portal de login cuenta con botones de **acceso rápido** para probar los diferentes perfiles del sistema:
+El portal de login cuenta con botones de **acceso rápido** para probar los diferentes perfiles del sistema
+(coinciden con los usuarios semilla del backend, ver `DataSeeder.java`):
 
 | Rol | Correo Corporativo | Contraseña | Permisos |
 | :--- | :--- | :--- | :--- |
-| **Agrónomo** | `agronomo@fundocorp.com` | `agronomo123` | Control de riego, telemetría y reportes. |
-| **Gerente** | `gerente@fundocorp.com` | `gerente123` | Acceso total (Control, Reportes, Administración CRUD). |
-| **Regulador (ANA)** | `regulador@ana.gob.pe` | `regulador123` | Solo lectura de telemetría y descarga de reportes normativos. |
+| **Agrónomo** | `agronomo@fundocorp.com` | `123456` | Control de riego, telemetría y reportes. |
+| **Gerente** | `gerente@fundocorp.com` | `123456` | Acceso total (Control, Reportes, Administración CRUD). |
+| **Regulador (ANA)** | `regulador@ana.gob.pe` | `123456` | Solo lectura de telemetría y descarga de reportes normativos. |

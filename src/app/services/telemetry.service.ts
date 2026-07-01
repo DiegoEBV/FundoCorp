@@ -1,44 +1,33 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { LecturaSensor } from '../models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TelemetryService {
-  private apiUrl = 'http://localhost:8080/api/telemetry';
+  private apiUrl = `${environment.apiUrl}/telemetry`;
 
   // Signals para almacenar la telemetría en tiempo real
   readonly lecturas = signal<LecturaSensor[]>([]);
-  
+
   // Última actualización global del sistema
   readonly ultimaActualizacion = signal<Date>(new Date());
 
   constructor(private http: HttpClient) {
-    this.generarTelemetriaSemilla();
+    this.cargarTelemetriaInicial();
     this.iniciarSimulacionEnvios();
   }
 
-  // Generar datos iniciales históricos de telemetría (últimas 24 horas por ejemplo)
-  private generarTelemetriaSemilla(): void {
-    const baseLecturas: LecturaSensor[] = [];
-    const fechaBase = new Date();
-
-    // Generar lecturas históricas para los controladores 201, 202, 203, 204, 205
-    const controladores = [201, 202, 203, 204, 205];
-    
-    // Generar 12 puntos de datos históricos (cada 2 horas) por controlador
-    for (let i = 12; i >= 0; i--) {
-      const fecha = new Date(fechaBase.getTime() - i * 2 * 60 * 60 * 1000);
-      
-      controladores.forEach(idCtrl => {
-        baseLecturas.push(this.crearLecturaAleatoria(idCtrl, fecha));
-      });
-    }
-
-    this.lecturas.set(baseLecturas);
-    this.ultimaActualizacion.set(fechaBase);
+  // Cargar el historial real de telemetría desde el backend (GET /api/telemetry)
+  private cargarTelemetriaInicial(): void {
+    this.http.get<LecturaSensor[]>(this.apiUrl).subscribe(lecturas => {
+      this.lecturas.set(lecturas);
+      this.ultimaActualizacion.set(new Date());
+    });
   }
 
   // Generar una lectura de sensor con fluctuaciones realistas basadas en el tipo de controlador/zona
@@ -53,7 +42,7 @@ export class TelemetryService {
     let valvState = false;
 
     const hora = fecha.getHours();
-    
+
     // Simular radiación y temperatura diurna
     if (hora >= 6 && hora <= 18) {
       // Pico de radiación a mediodía (12:00)
@@ -104,14 +93,15 @@ export class TelemetryService {
     };
   }
 
-  // Simular la llegada de nuevos paquetes de sensores (cada 30 segundos en UI para demostración, simula los 15 min de LoRaWAN)
+  // Simular la llegada de nuevos paquetes de sensores mientras no exista una pasarela LoRaWAN/MQTT
+  // real conectada al backend. Estas lecturas son solo de UI y no se persisten en la base de datos.
   private iniciarSimulacionEnvios(): void {
     setInterval(() => {
       const controladores = [201, 202, 203, 204, 205];
       const ahora = new Date();
-      
+
       const nuevasLecturas = controladores.map(idCtrl => this.crearLecturaAleatoria(idCtrl, ahora));
-      
+
       // Actualizar el Signal agregando las nuevas lecturas al final del historial
       this.lecturas.update(prev => {
         // Mantener solo los últimos 150 registros para evitar consumo de memoria
@@ -126,21 +116,18 @@ export class TelemetryService {
     }, 30000); // 30 segundos
   }
 
-  // Filtrar lecturas históricas por controlador para ApexCharts
+  // Filtrar lecturas históricas por controlador (GET /api/telemetry/controlador/{id})
   getHistoricoControlador(idControlador: number): Observable<LecturaSensor[]> {
-    // return this.http.get<LecturaSensor[]>(`${this.apiUrl}/controlador/${idControlador}`);
-    const historico = this.lecturas().filter(l => l.idControlador === idControlador);
-    return of(historico);
+    return this.http.get<LecturaSensor[]>(`${this.apiUrl}/controlador/${idControlador}`);
   }
 
-  // Simular un trigger de refresco manual
-  refrescarTelemetria(): Observable<boolean> {
-    const ahora = new Date();
-    const controladores = [201, 202, 203, 204, 205];
-    const nuevasLecturas = controladores.map(idCtrl => this.crearLecturaAleatoria(idCtrl, ahora));
-
-    this.lecturas.update(prev => [...prev, ...nuevasLecturas]);
-    this.ultimaActualizacion.set(ahora);
-    return of(true);
+  // Refrescar la telemetría desde el backend
+  refrescarTelemetria(): Observable<LecturaSensor[]> {
+    return this.http.get<LecturaSensor[]>(this.apiUrl).pipe(
+      tap(lecturas => {
+        this.lecturas.set(lecturas);
+        this.ultimaActualizacion.set(new Date());
+      })
+    );
   }
 }
